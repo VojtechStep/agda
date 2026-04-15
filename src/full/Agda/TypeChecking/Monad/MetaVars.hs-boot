@@ -10,6 +10,7 @@ import Control.Monad.Trans.Maybe    ( MaybeT )
 
 import Agda.Syntax.Common (InteractionId, MetaId)
 import Agda.TypeChecking.Monad.Base
+import qualified Agda.Utils.StrictReader as Strict
 import qualified Agda.Utils.StrictState as Strict
 
 class (MonadTCEnv m, ReadTCState m) => MonadInteractionPoints m where
@@ -31,6 +32,7 @@ instance MonadInteractionPoints m => MonadInteractionPoints (MaybeT m)
 instance MonadInteractionPoints m => MonadInteractionPoints (ReaderT r m)
 instance MonadInteractionPoints m => MonadInteractionPoints (StateT s m)
 instance (MonadInteractionPoints m, Monoid w) => MonadInteractionPoints (WriterT w m)
+instance MonadInteractionPoints m => MonadInteractionPoints (Strict.ReaderT s m)
 instance MonadInteractionPoints m => MonadInteractionPoints (Strict.StateT s m)
 
 instance MonadInteractionPoints TCM

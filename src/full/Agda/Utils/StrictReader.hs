@@ -16,6 +16,8 @@ import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Writer.Class (MonadWriter(..))
 import Control.Monad.Trans.Control (MonadTransControl(..))
 import Agda.Utils.ExpandCase
+import Agda.Utils.Impossible
+import Agda.Utils.Null
 
 newtype ReaderT r m a = ReaderT {runReaderT :: r -> m a}
 
@@ -118,6 +120,12 @@ instance MonadWriter w m => MonadWriter w (ReaderT r m) where
   listen = \(ReaderT m) -> ReaderT (oneShot \r -> listen (m r))
   {-# INLINE pass #-}
   pass   = \(ReaderT m) -> ReaderT (oneShot \r -> pass (m r))
+
+instance (Null (m a), Monad m) => Null (ReaderT r m a) where
+  empty = lift empty
+  {-# INLINE empty #-}
+  null  = __IMPOSSIBLE__
+  {-# NOINLINE null #-}
 
 ----------------------------------------------------------------------------------------------------
 
