@@ -27,6 +27,8 @@ import Control.Monad.Trans.Control (MonadTransControl(..))
 import Data.Strict.Tuple
 import GHC.Exts (oneShot)
 import Agda.Utils.ExpandCase
+import Agda.Utils.Impossible
+import Agda.Utils.Null
 
 newtype State s a = State {runState# :: s -> (# a, s #)}
 
@@ -204,3 +206,9 @@ instance ExpandCase (m (Pair a s)) => ExpandCase (StateT s m a) where
   {-# INLINE expand #-}
   expand k = StateT (oneShot \ ~s ->
     expand @(m (Pair a s)) (oneShot \ret -> let !s' = s in k (oneShot \act -> ret (runStateT# act s'))))
+
+instance (Null (m a), Monad m) => Null (StateT s m a) where
+  empty = lift empty
+  {-# INLINE empty #-}
+  null = __IMPOSSIBLE__
+  {-# NOINLINE null #-}

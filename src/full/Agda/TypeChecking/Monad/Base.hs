@@ -1222,6 +1222,7 @@ instance MonadFresh i m => MonadFresh i (StateT s m)
 instance (MonadFresh i m, Monoid w) => MonadFresh i (WriterT w m)
 instance MonadFresh i m => MonadFresh i (ListT m)
 instance MonadFresh i m => MonadFresh i (IdentityT m)
+instance MonadFresh i m => MonadFresh i (Strict.StateT s m)
 
 instance HasFresh i => MonadFresh i TCM where
   fresh = do
@@ -1430,6 +1431,11 @@ instance (MonadStConcreteNames m, Monoid w) => MonadStConcreteNames (WriterT w m
   runStConcreteNames m = WriterT $ runStConcreteNames $ StateT $ \ ns -> do
     ((x,ns'),w) <- runWriterT $ runStateT m ns
     return ((x,w),ns')
+
+instance MonadStConcreteNames m => MonadStConcreteNames (Strict.StateT s m) where
+  runStConcreteNames m = Strict.StateT $ \s -> runStConcreteNames $ StateT $ \ns -> do
+    ((!x, !ns'),s') <- Strict.runStateT (runStateT m ns) s
+    return ((x Strict.:!: s'),ns')
 
 ----------------------------------------------------------------------------------------------------
 -- * File handling

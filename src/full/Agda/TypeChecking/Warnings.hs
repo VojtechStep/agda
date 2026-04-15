@@ -56,6 +56,7 @@ import qualified Agda.Utils.List1 as List1
 import Agda.Utils.Maybe
 import qualified Agda.Utils.Set1 as Set1
 import Agda.Utils.Singleton
+import qualified Agda.Utils.StrictState as Strict
 
 import Agda.Utils.Impossible
 
@@ -78,6 +79,7 @@ class (MonadPretty m, MonadError TCErr m) => MonadWarning m where
 instance MonadWarning m => MonadWarning (MaybeT m)
 instance MonadWarning m => MonadWarning (ReaderT r m)
 instance MonadWarning m => MonadWarning (StateT s m)
+instance MonadWarning m => MonadWarning (Strict.StateT s m)
 instance (MonadWarning m, Monoid w) => MonadWarning (WriterT w m)
 
 instance MonadWarning TCM where
