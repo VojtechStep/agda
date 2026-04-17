@@ -62,11 +62,40 @@ instance Monoid w => MonadWriter w (Writer w) where
     pure a
 
 newtype WriterT w m a = WriterT {unWriterT :: StateT w m a}
-  deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadTransControl)
+  deriving (MonadIO)
 
 deriving instance ExpandCase (m (Pair a w)) => ExpandCase (WriterT w m a)
 deriving instance (Monad m, MonadError e m) => MonadError e (WriterT w m)
 deriving instance (Monad m, MonadReader r m) => MonadReader r (WriterT s m)
+
+instance (Functor m) => Functor (WriterT w m) where
+  {-# INLINE fmap #-}
+  fmap f (WriterT sa) = WriterT $ fmap f sa
+
+instance (Monad m) => Applicative (WriterT w m) where
+  {-# INLINE pure #-}
+  pure = WriterT . pure
+  {-# INLINE (<*>) #-}
+  WriterT sf <*> WriterT sa = WriterT (sf <*> sa)
+
+instance (Monad m) => Monad (WriterT w m) where
+  {-# INLINE return #-}
+  return = pure
+  {-# INLINE (>>=) #-}
+  WriterT sa >>= f = WriterT (sa >>= (unWriterT . f))
+  {-# INLINE (>>) #-}
+  (>>) = (*>)
+
+instance MonadTrans (WriterT w) where
+  {-# INLINE lift #-}
+  lift ma = WriterT (lift ma)
+
+instance MonadTransControl (WriterT w) where
+    type StT (WriterT w) a = Pair a w
+    {-# INLINE liftWith #-}
+    liftWith f = WriterT (liftWith \g -> f (g . unWriterT))
+    {-# INLINE restoreT #-}
+    restoreT = WriterT . restoreT
 
 instance (Monad m, MonadState s m) => MonadState s (WriterT w m) where
   {-# INLINE get #-}
