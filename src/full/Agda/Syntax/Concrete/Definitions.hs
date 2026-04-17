@@ -624,6 +624,7 @@ niceDeclarations fixs ds = do
      PolarityPragma{} -> return ([], ds)
 
      -- The other pragmas are less context-sensitive, so nothing to do:
+     AssumptionsPragma{}           -> keep
      BuiltinPragma{}               -> keep
      CompilePragma{}               -> keep
      DisplayPragma{}               -> keep
@@ -1228,6 +1229,7 @@ niceDeclarations fixs ds = do
               InjectivePragma{}         -> top     -- only needs name, not definition
               InjectiveForInferencePragma{} -> top
               DisplayPragma{}           -> top     -- only for printing
+              AssumptionsPragma{}       -> top
 
               -- The attached pragmas have already been handled at this point.
               CatchallPragma{}          -> __IMPOSSIBLE__

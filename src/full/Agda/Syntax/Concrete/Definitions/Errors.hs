@@ -307,6 +307,7 @@ unsafeDeclarationWarning' = \case
 unsafePragma :: CMaybe DeclarationWarning' m => Pragma -> m
 unsafePragma p =
   case p of
+    AssumptionsPragma{}        -> empty
     BuiltinPragma{}            -> empty
     CatchallPragma{}           -> empty
     CompilePragma{}            -> singleton $ PragmaCompiled r

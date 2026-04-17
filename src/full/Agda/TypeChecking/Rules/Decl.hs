@@ -18,6 +18,7 @@ import Data.Set (Set)
 
 import Agda.Interaction.Highlighting.Generate
 import Agda.Interaction.Options
+import Agda.Interaction.CheckUsedPostulates
 
 import qualified Agda.Syntax.Abstract as A
 import Agda.Syntax.Abstract.Views (deepUnscopeDecl, deepUnscopeDecls)
@@ -840,7 +841,7 @@ checkPragma r p = do
             _ -> uselessPragma $ P.text $ applyUnless b ("NO" ++) "INLINE directive only works on functions or constructors of records that allow copattern matching"
         A.OptionsPragma{} -> uselessPragma $ "OPTIONS pragma only allowed at beginning of file, before top module declaration"
         A.DisplayPragma f ps e -> checkDisplayPragma f ps e
-
+        A.AssumptionsPragma x as -> reportUnexpectedPostulates x as
         A.OverlapPragma q new -> do
           ifNotM ((q `isInModule`) <$> currentModule)
             (uselessPragma =<< fsep (

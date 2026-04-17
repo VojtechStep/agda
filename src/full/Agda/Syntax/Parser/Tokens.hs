@@ -25,7 +25,7 @@ data Keyword
         | KwEta | KwNoEta
         | KwHiding | KwUsing | KwRenaming | KwTo | KwPublic
         | KwOpaque | KwUnfolding
-        | KwOPTIONS | KwBUILTIN | KwLINE
+        | KwOPTIONS | KwASSUMPTIONS | KwBUILTIN | KwLINE
         | KwFOREIGN | KwCOMPILE
         | KwIMPOSSIBLE | KwSTATIC | KwINJECTIVE | KwINJECTIVE_FOR_INFERENCE | KwINLINE | KwNOINLINE
         | KwETA

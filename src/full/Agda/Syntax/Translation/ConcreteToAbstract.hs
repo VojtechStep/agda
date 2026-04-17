@@ -3098,6 +3098,12 @@ instance ToAbstract C.Pragma where
     map A.InjectiveForInferencePragma . maybeToList <$> do
       scopeCheckDef (PragmaExpectsDefinedSymbol "INJECTIVE_FOR_INFERENCE") x
 
+  toAbstract (C.AssumptionsPragma _ x as) = do
+    checkedHead <- scopeCheckDef (PragmaExpectsDefinedSymbol "ASSUMPTIONS") x
+    checkedTail <- sequence <$> traverse (scopeCheckDef (PragmaExpectsDefinedSymbol "ASSUMPTIONS")) as
+    pure $
+      (map (uncurry A.AssumptionsPragma) (maybeToList ((,) <$> checkedHead <*> checkedTail)))
+
   toAbstract pragma@(C.InlinePragma _ b x) = do
       caseMaybeM (toAbstract $ MaybeOldQName $ OldQName x Nothing) notInScope \case
         A.Con c                        -> concatMapM ret $ List1.toList $ getAmbiguous c
@@ -3438,6 +3444,7 @@ checkNoTerminationPragma b ds =
       C.WarningOnImport _ _         -> []
       C.InjectivePragma _ _         -> []
       C.InjectiveForInferencePragma{} -> []
+      C.AssumptionsPragma _ _ _     -> []
       C.DisplayPragma _ _ _         -> []
       C.CatchallPragma _            -> []
       C.NoCoverageCheckPragma _     -> []

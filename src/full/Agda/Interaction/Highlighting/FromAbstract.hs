@@ -239,6 +239,7 @@ instance Hilite A.Pragma where
     A.OverlapPragma x _             -> hilite x
     A.InlinePragma _inline x        -> hilite x
     A.DisplayPragma x ps e          -> hilite x <> hilite ps <> hilite e
+    A.AssumptionsPragma x as        -> hilite x <> hilite as
 
 instance Hilite A.Expr where
   hilite = \case

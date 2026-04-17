@@ -675,6 +675,7 @@ data Pragma
     -- ^ Mark a definition as injective for the conversion checker
   | DisplayPragma               Range Pattern Expr
     -- ^ Display lhs as rhs (modifies the printer).
+  | AssumptionsPragma           Range QName [QName]
 
   -- Attached (more or less) pragmas handled in the nicifier (Concrete.Definitions):
   | CatchallPragma              Range
@@ -1119,6 +1120,7 @@ instance HasRange Pragma where
   getRange (InlinePragma r _ _)              = r
   getRange (ImpossiblePragma r _)            = r
   getRange (EtaPragma r _)                   = r
+  getRange (AssumptionsPragma r _ _)         = r
   getRange (TerminationCheckPragma r _)      = r
   getRange (NoCoverageCheckPragma r)         = r
   getRange (WarningOnUsage r _ _)            = r
@@ -1336,6 +1338,7 @@ instance KillRange Pragma where
   killRange (StaticPragma _ q)                = killRangeN (StaticPragma noRange) q
   killRange (InjectivePragma _ q)             = killRangeN (InjectivePragma noRange) q
   killRange (InjectiveForInferencePragma _ q) = killRangeN (InjectiveForInferencePragma noRange) q
+  killRange (AssumptionsPragma _ q as)        = killRangeN (AssumptionsPragma noRange) q as
   killRange (InlinePragma _ b q)              = killRangeN (InlinePragma noRange b) q
   killRange (CompilePragma _ b q s)           = killRangeN (\ q -> CompilePragma noRange b q s) q
   killRange (ForeignPragma _ b s)             = ForeignPragma noRange b s
@@ -1491,6 +1494,7 @@ instance NFData Pragma where
   rnf (StaticPragma _ a)                = rnf a
   rnf (InjectivePragma _ a)             = rnf a
   rnf (InjectiveForInferencePragma _ a) = rnf a
+  rnf (AssumptionsPragma _ a b)         = rnf a `seq` rnf b
   rnf (InlinePragma _ _ a)              = rnf a
   rnf (ImpossiblePragma _ a)            = rnf a
   rnf (EtaPragma _ a)                   = rnf a

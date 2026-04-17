@@ -80,6 +80,7 @@ tokens :-
 <0,code,pragma_>   "{-#"               { beginWith pragma  $ symbol SymOpenPragma }
 <fpragma_>         "{-#"               { beginWith fpragma $ symbol SymOpenPragma }
 <pragma_,fpragma_> "#-}"               { endWith $ symbol SymClosePragma }
+<pragma_>   "ASSUMPTIONS"              { keyword KwASSUMPTIONS }
 <pragma_>   "BUILTIN"                  { keyword KwBUILTIN }
 <pragma_>   "CATCHALL"                 { keyword KwCATCHALL }
 <pragma_>   "COMPILE"                  { endWith $ beginWith fpragma $ keyword KwCOMPILE }

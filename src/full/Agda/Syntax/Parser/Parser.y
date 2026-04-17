@@ -166,6 +166,7 @@ import Agda.Utils.Impossible
     'INCOHERENT'              { TokKeyword KwINCOHERENT $$ }
     'INJECTIVE'               { TokKeyword KwINJECTIVE $$ }
     'INJECTIVE_FOR_INFERENCE' { TokKeyword KwINJECTIVE_FOR_INFERENCE $$ }
+    'ASSUMPTIONS'             { TokKeyword KwASSUMPTIONS $$ }
     'INLINE'                  { TokKeyword KwINLINE $$ }
     'NOINLINE'                { TokKeyword KwNOINLINE $$ }
     'MEASURE'                 { TokKeyword KwMEASURE $$ }
@@ -311,6 +312,7 @@ Token
     | 'with'                    { TokKeyword KwWith $1 }
 
       -- Please keep these pragmas in alphabetical order!
+    | 'ASSUMPTIONS'             { TokKeyword KwASSUMPTIONS $1 }
     | 'BUILTIN'                 { TokKeyword KwBUILTIN $1 }
     | 'CATCHALL'                { TokKeyword KwCATCHALL $1 }
     | 'COMPILE'                 { TokKeyword KwCOMPILE $1 }
@@ -1630,6 +1632,7 @@ DeclarationPragma
   | StaticPragma             { $1 }
   | InjectivePragma          { $1 }
   | InjectiveForInferencePragma { $1 }
+  | AssumptionsPragma        { $1 }
   | InlinePragma             { $1 }
   | NoInlinePragma           { $1 }
   | ImpossiblePragma         { $1 }
@@ -1719,6 +1722,11 @@ InjectiveForInferencePragma :: { Pragma }
 InjectiveForInferencePragma
   : '{-#' 'INJECTIVE_FOR_INFERENCE' PragmaQName '#-}'
     { InjectiveForInferencePragma (getRange ($1,$2,$3,$4)) $3 }
+
+AssumptionsPragma :: { Pragma }
+AssumptionsPragma
+  : '{-#' 'ASSUMPTIONS' PragmaQName PragmaQNames '#-}'
+    { AssumptionsPragma (getRange ($1,$2,$3,$4,$5)) $3 $4 }
 
 DisplayPragma :: { Pragma }
 DisplayPragma

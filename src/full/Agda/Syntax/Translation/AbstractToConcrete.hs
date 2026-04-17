@@ -1409,6 +1409,7 @@ instance ToConcrete RangeAndPragma where
     A.StaticPragma x -> C.StaticPragma r <$> toConcrete x
     A.InjectivePragma x -> C.InjectivePragma r <$> toConcrete x
     A.InjectiveForInferencePragma x -> C.InjectiveForInferencePragma r <$> toConcrete x
+    A.AssumptionsPragma x as -> C.AssumptionsPragma r <$> toConcrete x <*> toConcrete as
     A.InlinePragma b x -> C.InlinePragma r b <$> toConcrete x
     A.NotProjectionLikePragma q -> C.NotProjectionLikePragma r <$> toConcrete q
     A.OverlapPragma q i -> C.OverlapPragma r <$> (fmap pure (toConcrete q)) <*> pure i

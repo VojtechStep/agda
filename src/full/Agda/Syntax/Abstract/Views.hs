@@ -447,6 +447,7 @@ instance ExprLike Pragma where
       NotProjectionLikePragma{}   -> pure p
       OverlapPragma{}             -> pure p
       DisplayPragma f xs e        -> DisplayPragma f <$> rec xs <*> rec e
+      AssumptionsPragma{}         -> pure p
     where
       rec :: RecurseExprRecFn m
       rec e = recurseExpr f e
@@ -577,6 +578,7 @@ instance DeclaredNames Pragma where
     DisplayPragma{}           -> mempty
     OptionsPragma{}           -> mempty
     OverlapPragma{}           -> mempty
+    AssumptionsPragma{}       -> mempty
 
 instance DeclaredNames Clause where
   declaredNames (Clause _ _ rhs decls _) = declaredNames rhs <> declaredNames decls
