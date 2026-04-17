@@ -52,6 +52,7 @@ import Agda.Utils.Null
 import Agda.Utils.Permutation
 import qualified Agda.Utils.StrictReader as Strict
 import qualified Agda.Utils.StrictState as Strict
+import qualified Agda.Utils.StrictWriter as Strict
 import Agda.Utils.Tuple
 import qualified Agda.Utils.Maybe.Strict as Strict
 
@@ -549,6 +550,7 @@ instance MonadInteractionPoints m => MonadInteractionPoints (StateT s m)
 instance (MonadInteractionPoints m, Monoid w) => MonadInteractionPoints (WriterT w m)
 instance MonadInteractionPoints m => MonadInteractionPoints (Strict.ReaderT s m)
 instance MonadInteractionPoints m => MonadInteractionPoints (Strict.StateT s m)
+instance (MonadInteractionPoints m, Monoid w) => MonadInteractionPoints (Strict.WriterT w m)
 
 instance MonadInteractionPoints TCM where
   -- TODO: does the pure mode happen?

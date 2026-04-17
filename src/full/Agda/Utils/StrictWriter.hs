@@ -24,6 +24,8 @@ import Data.Strict.Tuple
 import GHC.Exts (oneShot)
 import Agda.Utils.StrictState
 import Agda.Utils.ExpandCase
+import Agda.Utils.Impossible
+import Agda.Utils.Null
 
 newtype Writer w a = Writer {unWriter :: State w a}
   deriving (Functor, Applicative, Monad)
@@ -63,10 +65,16 @@ newtype WriterT w m a = WriterT {unWriterT :: StateT w m a}
   deriving (Functor, Applicative, Monad, MonadTrans, MonadIO, MonadTransControl)
 
 deriving instance ExpandCase (m (Pair a w)) => ExpandCase (WriterT w m a)
-deriving instance (Monad m, MonadError e (StateT w m)) => MonadError e (WriterT w m)
-deriving instance (Monad m, MonadReader r (StateT w m)) => MonadReader r (WriterT w m)
-deriving instance (Monad m, MonadState s (StateT w m)) => MonadState s (WriterT w m)
+deriving instance (Monad m, MonadError e m) => MonadError e (WriterT w m)
+deriving instance (Monad m, MonadReader r m) => MonadReader r (WriterT s m)
 
+instance (Monad m, MonadState s m) => MonadState s (WriterT w m) where
+  {-# INLINE get #-}
+  get = lift get
+  {-# INLINE put #-}
+  put = lift . put
+  {-# INLINE state #-}
+  state = lift . state
 
 instance (Monoid w, Monad m) => MonadWriter w (WriterT w m) where
   {-# INLINE tell #-}
@@ -99,3 +107,9 @@ runWriterT (WriterT act) = runStateT act mempty
 {-# INLINE execWriterT #-}
 execWriterT :: Monoid w => Monad m => WriterT w m a -> m w
 execWriterT (WriterT act) = execStateT act mempty
+
+instance (Null (m a), Monad m) => Null (WriterT w m a) where
+  empty = lift empty
+  {-# INLINE empty #-}
+  null  = __IMPOSSIBLE__
+  {-# NOINLINE null #-}

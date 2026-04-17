@@ -12,6 +12,7 @@ import Agda.Syntax.Common (InteractionId, MetaId)
 import Agda.TypeChecking.Monad.Base
 import qualified Agda.Utils.StrictReader as Strict
 import qualified Agda.Utils.StrictState as Strict
+import qualified Agda.Utils.StrictWriter as Strict
 
 class (MonadTCEnv m, ReadTCState m) => MonadInteractionPoints m where
   freshInteractionId :: m InteractionId
@@ -34,6 +35,7 @@ instance MonadInteractionPoints m => MonadInteractionPoints (StateT s m)
 instance (MonadInteractionPoints m, Monoid w) => MonadInteractionPoints (WriterT w m)
 instance MonadInteractionPoints m => MonadInteractionPoints (Strict.ReaderT s m)
 instance MonadInteractionPoints m => MonadInteractionPoints (Strict.StateT s m)
+instance (MonadInteractionPoints m, Monoid w) => MonadInteractionPoints (Strict.WriterT w m)
 
 instance MonadInteractionPoints TCM
 

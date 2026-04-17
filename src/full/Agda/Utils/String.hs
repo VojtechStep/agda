@@ -18,6 +18,7 @@ import Agda.Utils.List1 (String1, fromList)
 import Agda.Utils.Size  (Sized, natSize)
 import qualified Agda.Utils.StrictReader as Strict
 import qualified Agda.Utils.StrictState as Strict
+import qualified Agda.Utils.StrictWriter as Strict
 
 instance IsString String1 where
   fromString = fromList
@@ -134,4 +135,7 @@ instance (IsString (m a), Monad m) => IsString (Strict.ReaderT s m a) where
   fromString = lift . fromString
 
 instance (IsString (m a), Monad m) => IsString (Strict.StateT s m a) where
+  fromString = lift . fromString
+
+instance (IsString (m a), Monad m) => IsString (Strict.WriterT w m a) where
   fromString = lift . fromString

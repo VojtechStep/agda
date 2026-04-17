@@ -58,6 +58,7 @@ import qualified Agda.Utils.Set1 as Set1
 import Agda.Utils.Singleton
 import qualified Agda.Utils.StrictReader as Strict
 import qualified Agda.Utils.StrictState as Strict
+import qualified Agda.Utils.StrictWriter as Strict
 
 import Agda.Utils.Impossible
 
@@ -83,6 +84,7 @@ instance MonadWarning m => MonadWarning (StateT s m)
 instance (MonadWarning m, Monoid w) => MonadWarning (WriterT w m)
 instance MonadWarning m => MonadWarning (Strict.ReaderT s m)
 instance MonadWarning m => MonadWarning (Strict.StateT s m)
+instance (MonadWarning m, Monoid w) => MonadWarning (Strict.WriterT w m)
 
 instance MonadWarning TCM where
   addWarning enabled tcwarn = ifImpureConv

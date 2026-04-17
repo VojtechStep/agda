@@ -27,7 +27,7 @@ import qualified Control.Exception as E
 import qualified Control.Monad.Catch as Catch
 import Control.Monad.Except         ( MonadError(..), ExceptT(..), runExceptT )
 import Control.Monad.IO.Class       ( MonadIO(..) )
-import Control.Monad.State          ( MonadState(..), modify, StateT(..), runStateT, evalStateT )
+import Control.Monad.State          ( MonadState(..), modify, StateT(..), runStateT, evalStateT, mapStateT )
 import Control.Monad.Reader         ( MonadReader(..), ReaderT(..), runReaderT )
 import Control.Monad.Writer         ( WriterT(..), runWriterT )
 import Control.Monad.Trans          ( MonadTrans(..), lift )
@@ -1224,6 +1224,7 @@ instance MonadFresh i m => MonadFresh i (ListT m)
 instance MonadFresh i m => MonadFresh i (IdentityT m)
 instance MonadFresh i m => MonadFresh i (Strict.ReaderT s m)
 instance MonadFresh i m => MonadFresh i (Strict.StateT s m)
+instance (MonadFresh i m, Monoid w) => MonadFresh i (Strict.WriterT w m)
 
 instance HasFresh i => MonadFresh i TCM where
   fresh = do
@@ -1440,6 +1441,9 @@ instance MonadStConcreteNames m => MonadStConcreteNames (Strict.StateT s m) wher
   runStConcreteNames m = Strict.StateT $ \s -> runStConcreteNames $ StateT $ \ns -> do
     ((!x, !ns'),s') <- Strict.runStateT (runStateT m ns) s
     return ((x Strict.:!: s'),ns')
+
+instance (MonadStConcreteNames m, Monoid w) => MonadStConcreteNames (Strict.WriterT w m) where
+  runStConcreteNames m = Strict.WriterT $ runStConcreteNames (mapStateT Strict.unWriterT m)
 
 ----------------------------------------------------------------------------------------------------
 -- * File handling
